@@ -1,0 +1,5 @@
+requests
+pandas
+pyarrow
+adlfs
+python-dotenv
