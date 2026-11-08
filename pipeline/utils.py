@@ -22,6 +22,7 @@ def get_logger(name):
         level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     )
+    logging.getLogger("azure").setLevel(logging.WARNING)   # hide the Azure SDK's HTTP chatter
     return logging.getLogger(name)
 
 

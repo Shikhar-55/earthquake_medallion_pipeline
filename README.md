@@ -8,7 +8,7 @@ Built for DATA 5330 / 6330 at Utah State University.
 
 **Bronze** (`bronze.py`)
 - Reads: USGS API, everything added or changed since the last run
-- Writes: `bronze/usgs/load_date=YYYY-MM-DD/load_hr=HH/events.jsonl` (raw JSON, one event per line)
+- Writes: `bronze/usgs/load_date=YYYY-MM-DD/load_hr=HH/events_HHMMSS.jsonl` (raw JSON, one event per line)
 - Partitioned by: load time
 - Strategy: append only, watermark `usgs_to_bronze`
 

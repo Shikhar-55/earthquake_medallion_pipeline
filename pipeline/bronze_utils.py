@@ -41,9 +41,11 @@ def fetch_events(start):
 
 def write_events(fs, events, run_ts):
     """Write the events, untouched except for a load_ts stamp, into this run's
-    partition folder:  bronze/usgs/load_date=YYYY-MM-DD/load_hr=HH/events.jsonl"""
+    partition folder:  bronze/usgs/load_date=YYYY-MM-DD/load_hr=HH/events_HHMMSS.jsonl
+    The file name carries the run time so two runs in the same hour never overwrite each other."""
     for event in events:
         event["load_ts"] = utils.to_text(run_ts)
-    path = f"{config.BRONZE_PATH}/load_date={run_ts:%Y-%m-%d}/load_hr={run_ts:%H}/events.jsonl"
+    path = (f"{config.BRONZE_PATH}/load_date={run_ts:%Y-%m-%d}/load_hr={run_ts:%H}"
+            f"/events_{run_ts:%H%M%S}.jsonl")
     utils.write_jsonl(fs, path, events)
     log.info("Wrote %d lines to %s", len(events), path)

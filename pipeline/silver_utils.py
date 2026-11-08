@@ -28,7 +28,7 @@ def read_new_bronze(fs, watermark):
     pruning), then keep only rows whose load_ts is newer than the watermark."""
     watermark_hour = watermark.replace(minute=0, second=0)
     rows = []
-    for path in fs.glob(f"{config.BRONZE_PATH}/load_date=*/load_hr=*/events.jsonl"):
+    for path in fs.glob(f"{config.BRONZE_PATH}/load_date=*/load_hr=*/*.jsonl"):
         date_part = path.split("load_date=")[1][:10]            # 2026-11-01
         hr_part = path.split("load_hr=")[1][:2]                 # 13
         folder_time = datetime.strptime(f"{date_part}T{hr_part}", "%Y-%m-%dT%H").replace(tzinfo=timezone.utc)
@@ -92,6 +92,9 @@ def add_columns(df):
     df["mag_class"] = df["mag"].apply(mag_class)
     df["depth_class"] = df["depth_km"].apply(depth_class)
     df["is_reviewed"] = df["status"] == "reviewed"
+    # felt / sig can be None for every row in a small batch, so force them numeric first
+    df["felt"] = pd.to_numeric(df["felt"], errors="coerce")
+    df["sig"] = pd.to_numeric(df["sig"], errors="coerce")
     df["is_felt"] = df["felt"].fillna(0) > 0
     df["is_significant"] = df["sig"].fillna(0) >= 600
     df["hours_to_update"] = (df["updated_ts"] - df["event_ts"]).dt.total_seconds() / 3600
